@@ -1,0 +1,35 @@
+<!DOCTYPE html>  
+<html>  
+	<head>  
+		<title>Tweet Time Zones</title>  
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	</head>  
+	<body>
+		<h2 id="zoneCount"></h2>
+		<h2 id="tweetCount"></h2>
+		<ul id="zones"></ul>  
+		<script type="text/javascript">  
+			var zone_list = $("#zones");  
+			function load_zones() {  
+				$.getJSON("/stream", function(zone_info) {
+						var time_zones = zone_info['time_zones'];
+						var tweet_count = zone_info['tweet_count'];
+						var time_zone_count = zone_info['zone_count'];
+
+						$('h2#zoneCount').text('Time Zones Represented: ' + time_zone_count);
+						$('h2#tweetCount').text('Tweet Count: ' + tweet_count);
+
+						$('ul#zones > li').remove();
+						$.each(time_zones, function(key, val) {  
+							$("<li>").text(key + ': ' + (100.0 * parseFloat(val) / parseFloat(tweet_count)).toFixed(2) + '%').prependTo(zone_list);  
+							});
+						
+						load_zones();
+						
+						});  
+			}  
+load_zones();
+</script>  
+	</body>  
+</html>  
+
