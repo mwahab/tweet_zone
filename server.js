@@ -31,28 +31,24 @@ function load_static_file(uri, res) {
 var twitter_client = http.createClient(80, "api.twitter.com");
 var tweet_emitter = new events.EventEmitter();
 
-var zone_info = {tweet_count: 0, zone_count: 0, time_zones: {}}
+var zone_info = {tweet_count: 0, zone_count: 0, time_zones: {}};
 
 function get_tweets() {
     request({ uri:'http://api.twitter.com/1/statuses/public_timeline.json'}, function(err, response, body) {
         try {
             var tweets = JSON.parse(body);
             if(tweets.length > 0) {
-
-                var time_zones = zone_info['time_zones'];
-
-                // retrieve the timezones
                 for(var i in tweets) {
-                    var time_zone = tweets[i]['user']['time_zone'];
-                    if (!time_zone) continue;
-
-                    if(!time_zones[time_zone]) {
-                        time_zones[time_zone] = 1;
-                        zone_info['zone_count']++;
-                    } else {
-                        time_zones[time_zone]++;
+                    var time_zone = tweets[i].user.time_zone;
+                    if (time_zone) { 
+                        if(!time_zones[time_zone]) {
+                            zone_info.time_zones[time_zone] = 1;
+                            zone_info.zone_count++;
+                        } else {
+                            zone_info.time_zones[time_zone]++;
+                        }
+                        zone_info.tweet_count++;
                     }
-                    zone_info['tweet_count']++;
                 }
 
                 tweet_emitter.emit("tweets", zone_info);
