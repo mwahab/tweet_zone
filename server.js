@@ -41,7 +41,7 @@ function get_tweets() {
                 for(var i in tweets) {
                     var time_zone = tweets[i].user.time_zone;
                     if (time_zone) { 
-                        if(!time_zones[time_zone]) {
+                        if(!zone_info.time_zones[time_zone]) {
                             zone_info.time_zones[time_zone] = 1;
                             zone_info.zone_count++;
                         } else {
@@ -50,14 +50,7 @@ function get_tweets() {
                         zone_info.tweet_count++;
                     }
                 }
-
                 tweet_emitter.emit("tweets", zone_info);
-
-
-                // for(var key in time_zones) {
-                //     console.log((100.0 * time_zones[key] / tweet_count) + "%: " + key);
-                // }
-                // console.log('===== Time Zone Count: ' + time_zone_count + ', Tweet Count: ' + tweet_count + ' ============\\n');
             }
         }
         catch(error) {
@@ -75,7 +68,6 @@ http.createServer(function(req, res) {
             res.writeHead(200, {'Content-Type':'text/plain'});
             res.end(JSON.stringify(tweets));
         });
-        console.log('Listener count:' + tweet_emitter.listeners.length);
     } else {
         load_static_file(uri, res);
     }
